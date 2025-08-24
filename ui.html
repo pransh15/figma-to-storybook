@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Figma to Storybook</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      line-height: 1.4;
+      color: #333;
+      background: #ffffff;
+      padding: 16px;
+    }
+
+    .container {
+      max-width: 100%;
+    }
+
+    .header {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #1a1a1a;
+    }
+
+    .header p {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #1a1a1a;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      font-size: 14px;
+      background: white;
+      transition: border-color 0.2s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #0d99ff;
+      box-shadow: 0 0 0 2px rgba(13, 153, 255, 0.1);
+    }
+
+    .props-section {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .props-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .props-header h3 {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .add-prop-btn {
+      background: #0d99ff;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .add-prop-btn:hover {
+      background: #0b87e3;
+    }
+
+    .prop-item {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .prop-row {
+      display: grid;
+      grid-template-columns: 1fr 80px 1fr 24px;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .remove-prop-btn {
+      background: #dc3545;
+      color: white;
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .remove-prop-btn:hover {
+      background: #c82333;
+    }
+
+    .buttons {
+      margin-top: 24px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: #0d99ff;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #0b87e3;
+    }
+
+    .btn-primary:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+
+    .status-message {
+      margin: 12px 0;
+      padding: 12px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .status-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .status-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status-info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .spinner {
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #0d99ff;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .download-options {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      border: 1px solid #e9ecef;
+    }
+
+    .download-options h4 {
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: #495057;
+    }
+
+    .download-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .download-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .download-btn-zip {
+      background: #0d99ff;
+      color: white;
+    }
+
+    .download-btn-zip:hover {
+      background: #0b87e3;
+    }
+
+    .download-btn-copy {
+      background: #28a745;
+      color: white;
+    }
+
+    .download-btn-copy:hover {
+      background: #218838;
+    }
+
+    .download-btn-individual {
+      background: #6c757d;
+      color: white;
+    }
+
+    .download-btn-individual:hover {
+      background: #5a6268;
+    }
+
+    .file-preview {
+      margin-top: 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .file-preview-header {
+      background: #f8f9fa;
+      padding: 8px 12px;
+      border-bottom: 1px solid #e0e0e0;
+      font-weight: 500;
+      font-size: 12px;
+    }
+
+    .file-preview-content {
+      padding: 12px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 11px;
+      line-height: 1.4;
+      max-height: 200px;
+      overflow-y: auto;
+      background: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Export to Storybook</h1>
+      <p>Generate React components and Storybook stories from your Figma designs</p>
+    </div>
+
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <p>Generating files...</p>
+    </div>
+
+    <div id="main-form">
+      <div id="status-message" class="status-message hidden"></div>
+
+      <div class="form-group">
+        <label for="component-name">Component Name</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="component-name" placeholder="MyComponent" style="flex: 1;" />
+          <button onclick="refreshSelection()" style="padding: 8px 12px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">🔄</button>
+        </div>
+        <small style="color: #666; font-size: 11px; margin-top: 4px; display: block;">Click 🔄 to refresh selection</small>
+      </div>
+
+      <div class="form-group">
+        <label for="category">Storybook Category</label>
+        <select id="category">
+          <option value="Atoms">Atoms</option>
+          <option value="Molecules">Molecules</option>
+          <option value="Organisms">Organisms</option>
+          <option value="Templates">Templates</option>
+          <option value="Pages">Pages</option>
+        </select>
+      </div>
+
+      <div class="props-section">
+        <div class="props-header">
+          <h3>Component Props (Optional)</h3>
+          <button class="add-prop-btn" onclick="addProp()">+ Add Prop</button>
+        </div>
+        <div id="props-container">
+          <!-- Props will be added here dynamically -->
+        </div>
+      </div>
+
+      <div class="buttons">
+        <button class="btn btn-secondary" onclick="cancel()">Cancel</button>
+        <button class="btn btn-primary" onclick="generateStorybook()" id="generate-btn">Generate</button>
+      </div>
+
+      <div id="download-section" class="hidden">
+        <div class="download-options">
+          <h4>Download Options</h4>
+          <div class="download-buttons">
+            <button class="download-btn download-btn-zip" onclick="downloadAsZip()">📦 Download ZIP</button>
+            <button class="download-btn download-btn-copy" onclick="copyAllFiles()">📋 Copy to Clipboard</button>
+          </div>
+          
+          <div style="margin-top: 16px;">
+            <h4>Download Individual Files</h4>
+            <div class="download-buttons">
+              <button class="download-btn download-btn-individual" onclick="downloadSingleFile('component')">Component (.jsx)</button>
+              <button class="download-btn download-btn-individual" onclick="downloadSingleFile('story')">Story (.stories.js)</button>
+              <button class="download-btn download-btn-individual" onclick="downloadSingleFile('css')">Styles (.css)</button>
+              <button class="download-btn download-btn-individual" onclick="downloadSingleFile('index')">Index (.js)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let propCounter = 0;
+    let generatedFiles = null;
+    let componentName = '';
+
+    // Initialize the plugin
+    window.onmessage = async (event) => {
+      const msg = event.data.pluginMessage;
+      console.log('Received message:', msg);
+      
+      if (msg.type === 'selection-info') {
+        updateComponentName(msg.data.name);
+        showStatus(`✓ ${msg.data.type.toLowerCase()} selected: "${msg.data.name}"`, 'success');
+        document.getElementById('generate-btn').disabled = false;
+      } else if (msg.type === 'no-selection') {
+        showStatus(msg.message, 'error');
+        document.getElementById('generate-btn').disabled = true;
+      } else if (msg.type === 'multiple-selection') {
+        showStatus(msg.message, 'error');
+        document.getElementById('generate-btn').disabled = true;
+      } else if (msg.type === 'invalid-selection') {
+        showStatus(msg.message, 'error');
+        document.getElementById('generate-btn').disabled = true;
+      } else if (msg.type === 'files-generated') {
+        console.log('Files generated successfully:', msg.data);
+        generatedFiles = msg.data.files;
+        componentName = msg.data.componentName;
+        showGeneratedFiles(msg.data.files, msg.data.componentName);
+        hideLoading();
+      } else if (msg.type === 'error') {
+        console.error('Plugin error:', msg.message);
+        showStatus('Error: ' + msg.message, 'error');
+        hideLoading();
+      } else if (msg.type === 'debug-info') {
+        console.log('Debug info from plugin:', msg.data);
+        if (msg.data.selection && msg.data.selection.length > 0) {
+          console.log('Current selection from plugin:', msg.data.selection);
+        }
+      }
+    };
+
+    // Request current selection on load
+    parent.postMessage({ pluginMessage: { type: 'get-selection' } }, '*');
+    
+    // Only auto-refresh if component name is empty to avoid overriding user edits
+    let selectionCheckInterval = setInterval(() => {
+      const componentNameInput = document.getElementById('component-name');
+      if (!componentNameInput.value.trim()) {
+        parent.postMessage({ pluginMessage: { type: 'get-selection' } }, '*');
+      }
+    }, 2000); // Check every 2 seconds, only if name field is empty
+
+    // Clear interval when plugin is closed
+    window.addEventListener('beforeunload', () => {
+      if (selectionCheckInterval) {
+        clearInterval(selectionCheckInterval);
+      }
+    });
+
+    function updateComponentName(name) {
+      // Only auto-update if the field is currently empty or contains default text
+      const componentNameInput = document.getElementById('component-name');
+      const currentValue = componentNameInput.value.trim();
+      
+      if (!currentValue || currentValue === 'MyComponent') {
+        // Clean the name for use as a component name
+        const cleanName = name.replace(/[^a-zA-Z0-9]/g, '');
+        const componentName = cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
+        componentNameInput.value = componentName;
+      }
+      
+      document.getElementById('generate-btn').disabled = false;
+    }
+
+    function addProp() {
+      propCounter++;
+      const container = document.getElementById('props-container');
+      const propDiv = document.createElement('div');
+      propDiv.className = 'prop-item';
+      propDiv.id = `prop-${propCounter}`;
+      
+      propDiv.innerHTML = `
+        <div class="prop-row">
+          <div>
+            <label>Prop Name</label>
+            <input type="text" placeholder="propName" data-prop="name" />
+          </div>
+          <div>
+            <label>Type</label>
+            <select data-prop="type">
+              <option value="string">string</option>
+              <option value="number">number</option>
+              <option value="boolean">boolean</option>
+              <option value="color">color</option>
+            </select>
+          </div>
+          <div>
+            <label>Default Value</label>
+            <input type="text" placeholder="default" data-prop="defaultValue" />
+          </div>
+          <button class="remove-prop-btn" onclick="removeProp('prop-${propCounter}')">×</button>
+        </div>
+      `;
+      
+      container.appendChild(propDiv);
+    }
+
+    function removeProp(propId) {
+      const prop = document.getElementById(propId);
+      if (prop) {
+        prop.remove();
+      }
+    }
+
+    function getProps() {
+      const props = [];
+      const propItems = document.querySelectorAll('.prop-item');
+      
+      propItems.forEach(item => {
+        const name = item.querySelector('[data-prop="name"]').value.trim();
+        const type = item.querySelector('[data-prop="type"]').value;
+        const defaultValue = item.querySelector('[data-prop="defaultValue"]').value.trim();
+        
+        if (name) {
+          props.push({ name, type, defaultValue });
+        }
+      });
+      
+      return props;
+    }
+
+    function showStatus(message, type) {
+      const statusEl = document.getElementById('status-message');
+      statusEl.className = `status-message status-${type}`;
+      statusEl.textContent = message;
+      statusEl.classList.remove('hidden');
+    }
+
+    function hideStatus() {
+      document.getElementById('status-message').classList.add('hidden');
+    }
+
+    function showLoading() {
+      document.getElementById('loading').classList.remove('hidden');
+      document.getElementById('main-form').style.opacity = '0.5';
+      document.getElementById('generate-btn').disabled = true;
+    }
+
+    function hideLoading() {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('main-form').style.opacity = '1';
+      document.getElementById('generate-btn').disabled = false;
+    }
+
+    function showGeneratedFiles(files, componentName) {
+      document.getElementById('download-section').classList.remove('hidden');
+      showStatus(`Files generated successfully! Choose a download option below.`, 'success');
+    }
+
+    // Simple ZIP implementation without external dependencies
+    function createZipBuffer(files) {
+      // This is a very basic ZIP implementation
+      // For production, you might want to use a more robust solution
+      let zip = 'PK\x03\x04'; // ZIP file signature
+      
+      Object.entries(files).forEach(([fileName, content]) => {
+        const data = new TextEncoder().encode(content);
+        // This is simplified - a real ZIP would need proper headers
+        zip += fileName + '\x00' + content;
+      });
+      
+      return new TextEncoder().encode(zip);
+    }
+
+    function downloadAsZip() {
+      try {
+        if (!generatedFiles) {
+          showStatus('No files generated yet', 'error');
+          return;
+        }
+
+        // Since we can't create real ZIP files without external libraries,
+        // create a properly formatted text archive that's easy to extract
+        let archiveContent = `# ${componentName} Storybook Files\n\n`;
+        archiveContent += `## Instructions:\n`;
+        archiveContent += `1. Create a folder named "${componentName}" in your project\n`;
+        archiveContent += `2. Copy each file content below into separate files\n`;
+        archiveContent += `3. Use the exact file names shown\n\n`;
+        archiveContent += `---\n\n`;
+        
+        Object.entries(generatedFiles).forEach(([filePath, content]) => {
+          archiveContent += `## FILE: ${filePath}\n`;
+          archiveContent += `\`\`\`${getFileExtension(filePath)}\n`;
+          archiveContent += content;
+          archiveContent += `\n\`\`\`\n\n---\n\n`;
+        });
+
+        const blob = new Blob([archiveContent], { type: 'text/markdown' });
+        downloadBlob(blob, `${componentName}-storybook-files.md`);
+        
+        showStatus('Markdown file downloaded! Follow the instructions inside to extract your files.', 'success');
+      } catch (error) {
+        console.error('Archive download error:', error);
+        showStatus('Archive download failed. Try individual file download.', 'error');
+      }
+    }
+
+    function getFileExtension(filePath) {
+      const ext = filePath.split('.').pop();
+      switch (ext) {
+        case 'jsx': return 'jsx';
+        case 'js': return 'javascript';
+        case 'css': return 'css';
+        default: return 'text';
+      }
+    }
+
+    function copyAllFiles() {
+      if (!generatedFiles) {
+        showStatus('No files generated yet', 'error');
+        return;
+      }
+
+      let allContent = `${componentName} Storybook Files\n`;
+      allContent += `${'='.repeat(40)}\n\n`;
+      
+      Object.entries(generatedFiles).forEach(([filePath, content], index) => {
+        allContent += `FILE ${index + 1}: ${filePath}\n`;
+        allContent += `${'-'.repeat(filePath.length + 10)}\n`;
+        allContent += content;
+        allContent += `\n\n${'='.repeat(40)}\n\n`;
+      });
+      
+      navigator.clipboard.writeText(allContent).then(() => {
+        showStatus('All files copied to clipboard! Paste into your code editor and save each section as separate files.', 'success');
+      }).catch(err => {
+        console.error('Failed to copy to clipboard:', err);
+        // Fallback: create a textarea with the content
+        const textarea = document.createElement('textarea');
+        textarea.value = allContent;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showStatus('Files copied to clipboard (fallback method)', 'success');
+      });
+    }
+
+    function downloadIndividualFiles() {
+      if (!generatedFiles) {
+        showStatus('No files generated yet', 'error');
+        return;
+      }
+
+      console.log('Downloading individual files...');
+      const fileEntries = Object.entries(generatedFiles);
+      
+      fileEntries.forEach(([filePath, content], index) => {
+        setTimeout(() => {
+          const blob = new Blob([content], { type: 'text/plain' });
+          const fileName = filePath.includes('/') ? filePath.split('/').pop() : filePath;
+          console.log(`Downloading file ${index + 1}: ${fileName}`);
+          downloadBlob(blob, fileName);
+        }, index * 500); // Stagger downloads by 500ms
+      });
+      
+      showStatus(`${fileEntries.length} files will be downloaded individually. Check your Downloads folder.`, 'success');
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+    }
+
+    function generateStorybook() {
+      const componentNameInput = document.getElementById('component-name').value.trim();
+      const category = document.getElementById('category').value;
+      const props = getProps();
+      
+      console.log('Generating storybook with:', { componentName: componentNameInput, category, props });
+      
+      if (!componentNameInput) {
+        showStatus('Please enter a component name', 'error');
+        return;
+      }
+      
+      // Validate component name
+      if (!/^[A-Z][a-zA-Z0-9]*$/.test(componentNameInput)) {
+        showStatus('Component name must start with a capital letter and contain only letters and numbers', 'error');
+        return;
+      }
+      
+      showLoading();
+      hideStatus();
+      document.getElementById('download-section').classList.add('hidden');
+      
+      // Add timeout to catch if the plugin doesn't respond
+      const timeout = setTimeout(() => {
+        hideLoading();
+        showStatus('Plugin timeout. Please try again or check the browser console for errors.', 'error');
+      }, 10000); // 10 second timeout
+      
+      // Clear timeout when we get a response
+      const originalOnMessage = window.onmessage;
+      window.onmessage = (event) => {
+        clearTimeout(timeout);
+        originalOnMessage(event);
+      };
+      
+      parent.postMessage({
+        pluginMessage: {
+          type: 'generate-storybook',
+          data: {
+            componentName: componentNameInput,
+            category,
+            props
+          }
+        }
+      }, '*');
+    }
+
+    function refreshSelection() {
+      showStatus('Refreshing selection...', 'info');
+      parent.postMessage({ pluginMessage: { type: 'get-selection' } }, '*');
+      // Also send debug request
+      parent.postMessage({ pluginMessage: { type: 'debug-selection' } }, '*');
+    }
+
+    // Add a sample prop for demonstration
+    addProp();
+    const firstPropInputs = document.querySelectorAll('[data-prop="name"], [data-prop="type"], [data-prop="defaultValue"]');
+    if (firstPropInputs.length >= 3) {
+      firstPropInputs[0].value = 'label';
+      firstPropInputs[1].value = 'string';
+      firstPropInputs[2].value = 'Click me';
+    }
+  </script>
+</body>
+</html>

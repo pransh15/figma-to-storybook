@@ -1,0 +1,26 @@
+{
+  "name": "Figma to Storybook.js",
+  "id": "figma-to-storybook-plugin",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma", "figjam"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": ["none"],
+    "devAllowedDomains": ["*"]
+  },
+  "permissions": [],
+  "menu": [
+    {
+      "name": "Export to Storybook",
+      "command": "export"
+    }
+  ],
+  "relaunchButtons": [
+    {
+      "command": "export",
+      "name": "Export to Storybook"
+    }
+  ]
+}

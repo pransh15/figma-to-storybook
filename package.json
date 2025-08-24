@@ -1,0 +1,48 @@
+{
+  "name": "figma-to-storybook-plugin",
+  "version": "1.2.0",
+  "description": "A Figma plugin that exports components to Storybook.js format with improved file generation and multiple download options",
+  "main": "code.js",
+  "scripts": {
+    "build": "echo 'No build step required for basic plugin'",
+    "dev": "echo 'Run this plugin in Figma Desktop App'",
+    "lint": "echo 'Add ESLint configuration if needed'",
+    "test": "echo 'Add tests for plugin logic'"
+  },
+  "keywords": [
+    "figma",
+    "plugin",
+    "storybook",
+    "react",
+    "design-to-code",
+    "ui-components",
+    "design-system",
+    "component-library",
+    "frontend",
+    "automation"
+  ],
+  "author": {
+    "name": "Pranshu Khanna",
+    "email": "your-email@example.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/figma-to-storybook-plugin"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/figma-to-storybook-plugin/issues"
+  },
+  "homepage": "https://github.com/your-username/figma-to-storybook-plugin#readme",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.88.0"
+  },
+  "figma": {
+    "id": "placeholder-id-update-when-publishing",
+    "main": "code.js",
+    "ui": "ui.html"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
